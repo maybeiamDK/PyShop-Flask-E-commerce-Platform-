@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/item_page.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <title>Clothing</title>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const cartIcon = document.getElementById('cart-icon');
+        const cartDropdown = document.getElementById('cart-dropdown');
+      
+        cartIcon.addEventListener('click', function (e) {
+          e.preventDefault();
+      
+          fetch('/cart_items')
+            .then(response => response.json())
+            .then(data => {
+              cartDropdown.innerHTML = ''; // Очистити
+              if (data.items.length === 0) {
+                cartDropdown.innerHTML = '<p>У вас ще немає покупок.</p>';
+              } else {
+                const ul = document.createElement('ul');
+                data.items.forEach(item => {
+                  const li = document.createElement('li');
+                  li.textContent = `${item.brand} ${item.name} : ${item.quantity} шт , ${item.price}$`;
+                  ul.appendChild(li);
+                });
+                cartDropdown.appendChild(ul);
+              }
+              cartDropdown.style.display = 'block';
+            });
+        });
+      
+        // Закриття при натисканні поза дропдауном
+        document.addEventListener('click', function (e) {
+          if (!cartDropdown.contains(e.target) && e.target !== cartIcon) {
+            cartDropdown.style.display = 'none';
+          }
+        });
+      });
+      </script>
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+        <a href="{{ url_for('index') }}" class="d-flex align-items-center link-body-emphasis text-decoration-none">
+          <span class="fs-4">Clothing shop</span>
+        </a>
+  
+        <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('clothing') }}">Clothing</a>
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('shoes') }}">Shoes</a>
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('accessories') }}">Accessories</a>
+          {% if session['user_id'] %}
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('personal_page') }}">
+            <img src="{{ url_for('static', filename='user.png') }}" alt="Log in" width="25" height="25">
+          </a>
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="" id="cart-icon">
+            <img src="{{ url_for('static', filename='bag.png') }}" alt="Log in" width="25" height="25">
+          </a>
+          {% else %}
+          <a class="py-2 link-body-emphasis text-decoration-none" href="{{ url_for('login') }}">
+            <img src="{{ url_for('static', filename='user.png') }}" alt="Log in" width="25" height="25">
+          </a>
+          {% endif %}
+        </nav>
+      </div>
+
+      <h1><p align="center">Clothing</p></h1>
+      <hr><br>
+
+      <div id="cart-dropdown" class="cart-box" style="display: none;">
+        <h5>Ваші покупки:</h5>
+        {% if session.cart %}
+          <ul>
+            {% for item in session.cart %}
+              <li>{{ item.brand }} {{ item.name }} : {{ item.quantity }} шт.</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>У вас ще немає покупок.</p>
+        {% endif %}
+      </div>
+
+      <div class="container_index">
+        <form method="get" id="filterForm">
+          <label for="sub_category">Category:</label>
+          <select name="sub_category" id="sub_category">
+            <option value="">All</option>
+            {% for sub in sub_categories %}
+              <option value="{{ sub }}" {% if selected_sub == sub %}selected{% endif %}>{{ sub.title() }}</option>
+            {% endfor %}
+          </select>
+          <br>
+          <label for="size">Size:</label>
+          <select name="size" id="size">
+            <option value="">All</option>
+            {% for s in sizes %}
+              <option value="{{ s }}" {% if selected_size == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+      <br>
+
+      {% if items%}
+      <div class="item_container">
+        {% for entry in items %}
+        {% set item = entry.item %}
+        <a href="{{ url_for('item_detail', item_id=item.id) }}" class="link_item">
+          <div class="item-card">
+            <img src="{{ item.image }}" alt="{{ item.name }}">
+            <h3>{{ item.brand }}</h3>
+            <h3>{{ item.name }}</h3>
+            <p>Price: {{ item.price }}$</p>
+            <button onclick="" class="btn btn-dark">Add to bag</button>
+          </div>
+        </a>
+      {% endfor %}
+      </div>
+      
+      {% else %}
+      <div class="container_index">
+        <p>Немає товарів за обраними фільтрами</p>
+      </div>
+      
+      {% endif %}
+
+      <script>
+        document.getElementById("sub_category").addEventListener("change", function () {
+          document.getElementById("filterForm").submit();
+        });
+        document.getElementById("size").addEventListener("change", function () {
+          document.getElementById("filterForm").submit();
+        });
+      </script>
+
+      <br>
+      <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
+        <div></div>
+        
+        <div class="col mb-3">
+          <h5>HELP AND INFORMATION</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About Clothing shop</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Shop rules</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Return conditions</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Cooperation</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Frequently asked questions</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Contact</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Privacy Policy</a></li>
+          </ul>
+        </div>
+    
+        <div class="col mb-3">
+          <h5>DELIVERY</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">To the post office</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">By courier</a></li>
+          </ul>
+        </div>
+    
+        <div class="col mb-3">
+          <h5>PAYMENT</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">By bank card</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Postpaid</a></li>
+          </ul>
+        </div>
+      </footer>
+</body>
+</html>

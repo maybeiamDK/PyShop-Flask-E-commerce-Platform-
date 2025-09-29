@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <title>Adding items</title>
+    <script>
+        function updateSubCategories() {
+            const category = document.getElementById("category").value;
+            const subCategory = document.getElementById("sub-category");
+            const sizeField = document.getElementById("size-field");
+            const sizeSelect = document.getElementById("item_size");
+            
+            const subCategories = {
+                clothing: ["outerwear", "sweatshirts", "sweater", "denim", "trousers", "t-shirts", "shorts"],
+                shoes: ["sneakers", "boots", "open shoes"],
+                accessories: ["hats", "scarves", "glasses", "rings", "bags", "wallet", "socks", "keychains"]
+            };
+            
+            subCategory.innerHTML = "";
+            subCategories[category].forEach(sub => {
+                let option = document.createElement("option");
+                option.value = sub;
+                option.textContent = sub;
+                subCategory.appendChild(option);
+            });
+
+            if (category === "shoes") {
+                sizeField.style.display = "block";
+                sizeSelect.innerHTML = "";
+                for (let i = 32; i <= 46; i++) {
+                    let option = document.createElement("option");
+                    option.value = i;
+                    option.textContent = i;
+                    sizeSelect.appendChild(option);
+                }
+            } else {
+                sizeField.style.display = "block";
+                sizeSelect.innerHTML = "";
+                ["XS", "S", "M", "L", "XL", "XXL", "one_size"].forEach(size => {
+                    let option = document.createElement("option");
+                    option.value = size;
+                    option.textContent = size;
+                    sizeSelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+        <a href="{{ url_for('index') }}" class="d-flex align-items-center link-body-emphasis text-decoration-none">
+          <span class="fs-4">Clothing shop</span>
+        </a>
+  
+        <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('clothing') }}">Clothing</a>
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('shoes') }}">Shoes</a>
+          <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{{ url_for('accessories') }}">Accessories</a>
+          <a class="py-2 link-body-emphasis text-decoration-none" href="{{ url_for('logout') }}">Log out</a>
+        </nav>
+    </div>
+
+    <br>
+    <a href="{{ url_for('item_list') }}">
+      <img src="{{ url_for('static', filename='arrow-left.png') }}" alt="Log in" width="40" height="40">
+    </a>
+    <br>
+
+    <h2 align="center">Adding new products to the assortment</h2>
+    <hr>
+    
+    <br><br><br>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            <label for="brand">Item brand:</label>
+            <input type="text" id="brand" name="brand" required>
+            <br><br>
+            <label for="name">Item name:</label>
+            <input type="text" id="name" name="name" required>
+            <br><br>
+            <label for="price">Item price:</label>
+            <input type="number" id="price" name="price" step="0.01" required>
+            <br><br>
+            <label for="image">Image:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <br><br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+            <br><br>
+            <label for="category">Категорія:</label>
+            <select id="category" name="category" required onchange="updateSubCategories()">
+                <option value="clothing">Одяг</option>
+                <option value="shoes">Взуття</option>
+                <option value="accessories">Аксесуари</option>
+            </select>
+            <br><br>
+            <label for="sub-category">Підкатегорія:</label>
+            <select id="sub-category" name="sub-category" required>
+            </select>
+            <br><br>
+            <div id="size-field">
+              <label for="size">Розмір:</label>
+              <select name="item_size" id="item_size">
+              </select>
+            </div>
+            <br><br>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" step="10" required>
+            <br><br><br>
+            <button type="submit" class="btn btn-dark">Add item</button>
+        </form>
+        <script>updateSubCategories();</script>
+    </div>
+    <br><br>
+    
+    <br><br><br>
+    <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
+        <div></div>
+        
+        <div class="col mb-3">
+          <h5>HELP AND INFORMATION</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About Clothing shop</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Shop rules</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Return conditions</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Cooperation</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Frequently asked questions</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Contact</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Privacy Policy</a></li>
+          </ul>
+        </div>
+    
+        <div class="col mb-3">
+          <h5>DELIVERY</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">To the post office</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">By courier</a></li>
+          </ul>
+        </div>
+    
+        <div class="col mb-3">
+          <h5>PAYMENT</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">By bank card</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Postpaid</a></li>
+          </ul>
+        </div>
+      </footer>
+</body>
+</html>

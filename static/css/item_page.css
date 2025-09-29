@@ -1,0 +1,51 @@
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.image {
+    flex: 1;
+}
+
+.details {
+    flex: 2;
+}
+
+img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+select{
+    background-color: #ffffff; /* білий фон */
+    border: 1px solid #cccccc; /* світло-сірий бордер */
+    border-radius: 6px;        /* заокруглені кути */
+    padding: 6px 10px;
+    color: #000000;            /* чорний текст */
+    font-size: 16px;
+}
+
+
+.buy-button {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.link_item{
+    color: black !important;
+    text-decoration: none !important;
+}
+    
+.link_item:hover{
+    color: black !important;
+}
